@@ -1,8 +1,8 @@
 import "@babel/polyfill";
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
-const App = () => "Rendered!";
+import App from './app';
 
-ReactDOM.render(<App/>, document.getElementById('app'));
+ReactDOM.createRoot(document.getElementById('app')).render(<App/>);
