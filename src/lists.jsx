@@ -11,7 +11,7 @@ import {
   Heading,
   Text
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, ArrowDownIcon } from '@chakra-ui/icons';
 import { useFirestoreCollection, addRecord } from './firebase';
 import Username from './username';
 
@@ -37,12 +37,24 @@ export default function({user}) {
     setNewItem('');
   }
 
+  function handleKeyDown(event) {
+    if (event.key == 'Enter') {
+      event.preventDefault();
+      addNewItem();
+    }
+  }
+
   if (!loaded) return <Spinner/>;
 
   const items = Object.entries(data);
 
   return <Flex flexDir="column" flexGrow={1} overflowY="auto">
-    { items.length == 0 && 'No lists found - click to create one!' }
+    { items.length == 0 && (
+      <Flex m="auto" p={4} flexDir="column" align="center">
+        <Text>No lists added yet - try adding one at the bottom.</Text>
+        <ArrowDownIcon mt={4}/>
+      </Flex>
+    ) }
 
     <Flex flexDir="column" flexGrow={1}>
       { items.map(([id, {name, createdAt, createdBy}]) => (
@@ -54,10 +66,12 @@ export default function({user}) {
           py={4}
           flexDir="column"
         >
-          <Heading fontSize="xl"><Link href={`lists/${id}`}>{name}</Link></Heading>
-          <Text color="gray.400" fontSize="sm">
-            Created by <Username uid={createdBy}/>, at {shortDate(createdAt)}
-          </Text>
+          <Link href={`lists/${id}`}>
+            <Heading fontSize="xl">{name}</Heading>
+            <Text color="gray.400" fontSize="sm">
+              Created by <Username uid={createdBy}/>, at {shortDate(createdAt)}
+            </Text>
+          </Link>
         </Flex>
       )) }
     </Flex>
@@ -67,9 +81,10 @@ export default function({user}) {
         <Input
           bgColor="white"
           size="lg"
-          placeholder="honey"
+          placeholder="new list"
           value={newItem}
           onChange={updateNewItem}
+          onKeyDown={handleKeyDown}
         />
         <InputRightElement>
           <IconButton icon={<AddIcon />} onClick={addNewItem} isDisabled={newItem.length == 0}/>

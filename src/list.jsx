@@ -7,8 +7,9 @@ import {
   InputRightElement,
   IconButton,
   Spinner,
+  Text,
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, ArrowDownIcon } from '@chakra-ui/icons';
 import { arrayMoveImmutable } from 'array-move';
 
 import ItemList from './item-list';
@@ -76,6 +77,12 @@ export default ({listId, user}) => {
 
   return <>
     <Flex flexDir="column" flexGrow={1} overflowY="auto">
+      { cachedItems.length == 0 && (
+        <Flex m="auto" p={4} flexDir="column" align="center">
+          <Text>No items added yet - try adding one at the bottom.</Text>
+          <ArrowDownIcon mt={4}/>
+        </Flex>
+      ) }
       <ItemList
         items={cachedItems}
         onReorder={handleDragEnd}
@@ -88,7 +95,7 @@ export default ({listId, user}) => {
         <Input
           bgColor="white"
           size="lg"
-          placeholder="honey"
+          placeholder="new item"
           value={newItem}
           onChange={updateNewItem}
           onKeyDown={handleKeyDown}

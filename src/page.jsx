@@ -8,6 +8,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  Link,
 } from '@chakra-ui/react';
 import { HamburgerIcon, AddIcon } from '@chakra-ui/icons';
 import Login from './login';
@@ -21,7 +22,15 @@ export default function({user, page}) {
   if (user) {
     return <Flex bgColor="blue.400" width="100%" height="100%" flexDir="column">
       <Flex flexDir="column" mx="auto" minWidth="400px" height="100%" bgColor="blue.200">
-        <Flex justify="flex-end" p={2} bgColor="blue.100">
+        <Flex
+          pl={6}
+          pr={2}
+          py={2}
+          bgColor="blue.100"
+          justify="space-between"
+          align="center"
+        >
+          <Heading size="md" color="blue.200"><Link href="/">RunToStore</Link></Heading>
           <Menu direction="rtl">
             <MenuButton
               as={IconButton}
@@ -30,9 +39,6 @@ export default function({user, page}) {
               variant="ghost"
             />
             <MenuList>
-            <MenuItem as="a" href="/">
-                All lists
-              </MenuItem>
               <MenuItem onClick={logout}>
                 Logout
               </MenuItem>
