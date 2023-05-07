@@ -131,7 +131,7 @@ export const objectFromDocs = snapshot => {
   return hash;
 }
 
-function useFirestoreCollection(path, clause = null) {
+function useFirestoreCollection(path, clauses = null) {
   const [data, setData] = useState({});
   const [loaded, setLoaded] = useState(false);
 
@@ -140,7 +140,7 @@ function useFirestoreCollection(path, clause = null) {
 
     let q = query(
       col,
-      ...(clause ? [where(...clause)] : [])
+      ...(clauses ? clauses.map(clause => where(...clause)) : [])
     );
 
     const unsub = onSnapshot(q, querySnapshot => {

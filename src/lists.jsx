@@ -7,20 +7,15 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
-  Link,
-  Heading,
   Text
 } from '@chakra-ui/react';
 import { AddIcon, ArrowDownIcon } from '@chakra-ui/icons';
 import { useFirestoreCollection, addRecord } from './firebase';
-import Username from './username';
+import ListDetails from './list-details';
 
-function shortDate(date) {
-  return new Date(date).toLocaleString()
-}
 
 export default function({user}) {
-  const { data, loaded } = useFirestoreCollection(`lists`, ['owners', 'array-contains', user.uid]);
+  const { data, loaded } = useFirestoreCollection(`lists`, [['owners', 'array-contains', user.uid], ['deletedAt', '==', null]]);
   const [newItem, setNewItem] = useState('');
   function updateNewItem(e) {
     setNewItem(e.target.value);
@@ -57,22 +52,8 @@ export default function({user}) {
     ) }
 
     <Flex flexDir="column" flexGrow={1}>
-      { items.map(([id, {name, createdAt, createdBy}]) => (
-        <Flex
-          key={id}
-          m={4}
-          bgColor="white"
-          px={8}
-          py={4}
-          flexDir="column"
-        >
-          <Link href={`lists/${id}`}>
-            <Heading fontSize="xl">{name}</Heading>
-            <Text color="gray.400" fontSize="sm">
-              Created by <Username uid={createdBy}/>, at {shortDate(createdAt)}
-            </Text>
-          </Link>
-        </Flex>
+      { items.map(([id, item]) => (
+        <ListDetails key={id} id={id} item={item}/>
       )) }
     </Flex>
 
