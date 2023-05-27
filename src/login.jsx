@@ -75,6 +75,7 @@ export default function Login() {
           value={email}
           placeholder="email address"
           onChange={setEmail}
+          bgColor="white"
         />
         <InputRightElement width="90px">
           <Button onClick={onSubmit} size="sm" colorScheme={isValid ? 'green' : 'red'}>Submit</Button>

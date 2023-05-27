@@ -81,6 +81,7 @@ function withUser() {
 }
 
 function sendSignInLink(email) {
+  console.log(`return to host ${host}/login`);
   const actionCodeSettings = {
     url: host + '/login',
     handleCodeInApp: true
@@ -91,6 +92,7 @@ function sendSignInLink(email) {
     console.log("sent!")
     window.localStorage.setItem('emailForSignIn', email);
   })
+  .catch(err => console.error(err))
 }
 
 function handleSigninLink() {
@@ -182,8 +184,8 @@ function addRecord(path, data) {
 }
 
 function logout() {
-  signOut(auth);
   navigate("/");
+  signOut(auth);
 }
 
 function updateRecord(path, data) {

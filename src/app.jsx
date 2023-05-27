@@ -8,6 +8,7 @@ import { withUser, handleSigninLink } from './firebase';
 import { useRouter } from './router';
 import Page from './page';
 import  Lists from './lists';
+import Front from './front';
 
 
 const routeDefaults = { page: null }
@@ -15,13 +16,24 @@ const routeDefaults = { page: null }
 function getPageForRoute(state, user) {
   const { page, id } = state;
 
+  if (user === null) return <Spinner/>;
+  if (user === false) {
+    if (page == "logging-in") {
+      return 'logging in';
+    } else {
+      return <Front/>
+    }
+  }
+
   switch(page) {
+    case "logging-in":
+      return 'logging in...';
     case 'lists':
       return <Lists user={user} />
     case 'show':
       return <List listId={id} user={user}/>;
     default:
-      "loading"
+      return <Front/>
   }
 }
 
@@ -33,8 +45,8 @@ export default () => {
 
   useRouter(router => {
     router.on("/login", () => {
-      console.log("logging in!")
-      handleSigninLink()
+      handleSigninLink();
+      setRouterState({page: "logging-in"})
     })
     .on("/", () => {
       setRouterState({page: "lists"})
@@ -49,11 +61,9 @@ export default () => {
 
   const page = getPageForRoute(routerState, user);
 
-  console.log({user, page})
-
-  if (user == null) return <Spinner/>
+  console.log({user, page});
 
   return <ChakraProvider>
     <Page user={user} page={page}/>
-  </ChakraProvider>
+  </ChakraProvider>;
 }

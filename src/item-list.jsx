@@ -12,7 +12,6 @@ export default ({items, onReorder, onComplete, onDelete}) => {
           flexDir="column"
           ref={droppable.innerRef}
           {...droppable.droppableProps}
-          height="100%"
           p={[8]}
         >
           { items.map((item, index) => (
