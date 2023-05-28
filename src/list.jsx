@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 
 import {
   Flex,
+  Box,
   Input,
   InputGroup,
   InputRightElement,
@@ -9,7 +10,7 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import { AddIcon, ArrowDownIcon } from '@chakra-ui/icons';
+import { AddIcon, ArrowUpIcon, ArrowDownIcon, CheckIcon, CheckCircleIcon } from '@chakra-ui/icons';
 import { arrayMoveImmutable } from 'array-move';
 
 import ItemList from './item-list';
@@ -28,6 +29,9 @@ export default ({listId, user}) => {
     }
   }, [data]);
 
+  const { hideCompleted } = data || {};
+  const displayItems = hideCompleted ? cachedItems.filter(x => !x.completed) : cachedItems;
+
   const handleDragEnd = useCallback((result) => {
     const newItems = arrayMoveImmutable(cachedItems, result.source.index, result.destination.index);
     updateItems(newItems);
@@ -39,13 +43,13 @@ export default ({listId, user}) => {
     setNewItem(e.target.value);
   }
   function addNewItem() {
-    const newItems = [...cachedItems, {
+    const newItems = [{
       id: new Date().valueOf().toString(),
       name: newItem,
       addedAt: new Date().valueOf(),
       addedBy: user.uid,
       completed: false,
-    }];
+    }, ...cachedItems];
 
     updateItems(newItems);
     setNewItem('');
@@ -75,7 +79,31 @@ export default ({listId, user}) => {
     }
   }
 
-  return <>
+  function scrollTo(index) {
+    const id = cachedItems[index].id;
+    const el = document.getElementById(`item-${id}`)
+    el.scrollIntoView({behavior: 'smooth'});
+  }
+
+  function toggleHideCompleted() {
+    const sortedItems = cachedItems;
+    if (hideCompleted) {
+      sortedItems.sort((a, b) => a.completed - b.completed);
+    }
+    updateRecord(
+      path, {
+        hideCompleted: !hideCompleted,
+        items: sortedItems
+      });
+  }
+
+  return <Flex flexDir="column" height="100%" overflow="hidden" position="relative">
+    <Flex position="absolute" style={{right: "30px", bottom: "90px", width: "40px"}} flexDir="column" gap={[2]}>
+      <IconButton icon={<ArrowUpIcon/>} onClick={_ => scrollTo(0)}/>
+      <IconButton icon={hideCompleted ? <CheckIcon/> : <CheckCircleIcon/> } onClick={toggleHideCompleted}/>
+      <IconButton icon={<ArrowDownIcon/>} onClick={_ => scrollTo(displayItems.length - 1)}/>
+    </Flex>
+
     <Flex flexDir="column" flexGrow={1} overflowY="auto">
       { cachedItems.length == 0 && (
         <Flex m="auto" p={4} flexDir="column" align="center">
@@ -84,11 +112,14 @@ export default ({listId, user}) => {
         </Flex>
       ) }
       <ItemList
-        items={cachedItems}
+        items={displayItems}
         onReorder={handleDragEnd}
         onComplete={handleComplete}
         onDelete={handleDelete}
       />
+    </Flex>
+    <Flex>
+
     </Flex>
     <Flex bgColor="gray.200" p={2}>
       <InputGroup size='lg'>
@@ -105,5 +136,5 @@ export default ({listId, user}) => {
         </InputRightElement>
       </InputGroup>
     </Flex>
-  </>
+    </Flex>
 }

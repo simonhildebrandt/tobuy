@@ -1,7 +1,6 @@
 import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Flex, Text, Checkbox, IconButton } from '@chakra-ui/react';
-import { DeleteIcon } from '@chakra-ui/icons';
+import { Flex } from '@chakra-ui/react';
 import ListItem from './list-item';
 
 export default ({items, onReorder, onComplete, onDelete}) => {
@@ -12,7 +11,9 @@ export default ({items, onReorder, onComplete, onDelete}) => {
           flexDir="column"
           ref={droppable.innerRef}
           {...droppable.droppableProps}
-          p={[8]}
+          py={[8]}
+          pl={[8]}
+          pr={[24]}
         >
           { items.map((item, index) => (
             <Draggable
@@ -27,7 +28,8 @@ export default ({items, onReorder, onComplete, onDelete}) => {
                   {...draggable.dragHandleProps}
                   fontSize={[24]}
                   flexDir="column"
-                  pb={[4]}
+                  id={`item-${item.id}`}
+                  my={2}
                 >
                   <ListItem
                     item={item}

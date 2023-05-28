@@ -37,7 +37,7 @@ export default function({item, onComplete, onDelete}) {
     <Flex>
       <Checkbox
         isChecked={completed}
-        onChange={() => onComplete(id, !completed)}
+        onChange={_ => onComplete(id, !completed)}
         size="lg"
         mr={4}
       />
