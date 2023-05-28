@@ -18,7 +18,7 @@ import { logout } from './firebase';
 export default function({user, page}) {
 
   return <Flex bgColor="blue.400" width="100%" height="100%" flexDir="column">
-    <Flex flexDir="column" mx="auto" minWidth={[400, 500, 600]} height="100%" bgColor="blue.200">
+    <Flex flexDir="column" mx="auto" maxWidth="100%" minWidth={[400, 500, 600]} height="100%" bgColor="blue.200">
       <Flex
         pl={6}
         pr={2}

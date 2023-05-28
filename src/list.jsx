@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 
 import {
   Flex,
@@ -14,13 +14,17 @@ import { AddIcon, ArrowUpIcon, ArrowDownIcon, CheckIcon, CheckCircleIcon } from 
 import { arrayMoveImmutable } from 'array-move';
 
 import ItemList from './item-list';
+import Suggestions from './suggestions';
+
 import { useFirestoreDocument, updateRecord } from './firebase';
 
 export default ({listId, user}) => {
   const path = `lists/${listId}`;
 
+  const pageRef = useRef();
+
   const { data, loaded } = useFirestoreDocument(path);
-  const [newItem, setNewItem] = useState('');
+  const [newItem, setNewItem] = useState('s');
   const [cachedItems, setCachedItems] = useState([]);
 
   useEffect(() => {
@@ -36,6 +40,16 @@ export default ({listId, user}) => {
     const newItems = arrayMoveImmutable(cachedItems, result.source.index, result.destination.index);
     updateItems(newItems);
   });
+
+  const suggestions = newItem.length > 0 ? cachedItems.filter(i => i.name.includes(newItem)) : [];
+  console.log({newItem, suggestions, cachedItems});
+
+  useEffect(_ => {
+    console.log('new suggestion!', {newItem, suggestions})
+    if (suggestions.length > 0) {
+      scrollToId(suggestions[0].id);
+    }
+  }, [newItem]);
 
   if (!loaded) return <Spinner/>;
 
@@ -53,6 +67,7 @@ export default ({listId, user}) => {
 
     updateItems(newItems);
     setNewItem('');
+    scrollToId('list-top');
   }
 
   function handleComplete(id, completed) {
@@ -79,10 +94,17 @@ export default ({listId, user}) => {
     }
   }
 
+  function scrollToId(id) {
+    console.log('scrolling', {id})
+    setTimeout(_ => {
+      const el = document.getElementById(`item-${id}`)
+      console.log('finally scrolling')
+      el?.scrollIntoView({behavior: 'smooth'})
+    }, 100);
+  }
+
   function scrollTo(index) {
-    const id = cachedItems[index].id;
-    const el = document.getElementById(`item-${id}`)
-    el.scrollIntoView({behavior: 'smooth'});
+    scrollToId(cachedItems[index].id);
   }
 
   function toggleHideCompleted() {
@@ -94,17 +116,28 @@ export default ({listId, user}) => {
       path, {
         hideCompleted: !hideCompleted,
         items: sortedItems
-      });
+      }
+    );
+  }
+
+  function suggestionClicked({id, completed}) {
+    console.log("suggestion clicked", {id});
+    if (completed && hideCompleted) {
+      toggleHideCompleted();
+    }
+    scrollToId(id);
   }
 
   return <Flex flexDir="column" height="100%" overflow="hidden" position="relative">
-    <Flex position="absolute" style={{right: "30px", bottom: "90px", width: "40px"}} flexDir="column" gap={[2]}>
+    <Flex position="absolute" style={{right: "30px", bottom: "130px", width: "40px"}} flexDir="column" gap={[2]}>
       <IconButton icon={<ArrowUpIcon/>} onClick={_ => scrollTo(0)}/>
       <IconButton icon={hideCompleted ? <CheckIcon/> : <CheckCircleIcon/> } onClick={toggleHideCompleted}/>
       <IconButton icon={<ArrowDownIcon/>} onClick={_ => scrollTo(displayItems.length - 1)}/>
     </Flex>
 
-    <Flex flexDir="column" flexGrow={1} overflowY="auto">
+    <Flex flexDir="column" flexGrow={1} overflowY="auto" ref={pageRef}>
+      <Box id="item-list-top"/>
+
       { cachedItems.length == 0 && (
         <Flex m="auto" p={4} flexDir="column" align="center">
           <Text>No items added yet - try adding one at the bottom.</Text>
@@ -118,9 +151,7 @@ export default ({listId, user}) => {
         onDelete={handleDelete}
       />
     </Flex>
-    <Flex>
-
-    </Flex>
+    <Suggestions suggestions={suggestions} onSuggestionClick={suggestionClicked} />
     <Flex bgColor="gray.200" p={2}>
       <InputGroup size='lg'>
         <Input
