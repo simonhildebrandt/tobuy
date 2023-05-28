@@ -8,7 +8,7 @@ export default function({suggestions, onSuggestionClick}) {
       bgColor="blue.300"
       width="100%"
       height="110px"
-      px={2}
+      p={2}
       position="relative"
     >
       <Box
@@ -24,7 +24,7 @@ export default function({suggestions, onSuggestionClick}) {
         overflowX="auto"
         css={{"&::-webkit-scrollbar": {display: "none"}}}
         >
-        <Flex gap={4}>
+        <Flex gap={2}>
           { suggestions.map(({name, id, completed}) => (
             <Flex
               key={id}
@@ -32,8 +32,8 @@ export default function({suggestions, onSuggestionClick}) {
               bgColor="gray.100"
               px={3}
               py={2}
-              my={2}
               borderRadius={8}
+              whiteSpace="nowrap"
               onClick={_ => onSuggestionClick({id, completed})}
             >
               {name}

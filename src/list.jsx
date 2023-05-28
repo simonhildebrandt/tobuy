@@ -24,7 +24,7 @@ export default ({listId, user}) => {
   const pageRef = useRef();
 
   const { data, loaded } = useFirestoreDocument(path);
-  const [newItem, setNewItem] = useState('s');
+  const [newItem, setNewItem] = useState('');
   const [cachedItems, setCachedItems] = useState([]);
 
   useEffect(() => {
