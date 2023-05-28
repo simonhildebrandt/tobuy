@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Box } from '@chakra-ui/react';
+import { Flex, Box, HStack, Button } from '@chakra-ui/react';
 
 
 export default function({suggestions, onSuggestionClick}) {
@@ -12,6 +12,23 @@ export default function({suggestions, onSuggestionClick}) {
       position="relative"
     >
       <Box
+        width="100%"
+        overflowX="auto"
+        css={{"&::-webkit-scrollbar": {display: "none"}}}
+        >
+        <HStack gap={2}>
+          { suggestions.map(({name, id, completed}) => (
+            <Button
+              key={id}
+              minWidth="initial"
+              onClick={_ => onSuggestionClick({id, completed})}
+            >
+              {name}
+            </Button>
+          )) }
+        </HStack>
+      </Box>
+      <Box
         position="absolute"
         width="70px"
         height="100%"
@@ -19,28 +36,6 @@ export default function({suggestions, onSuggestionClick}) {
         right="0"
         bgGradient="linear(to-r, transparent, blue.300)"
       />
-      <Box
-        width="100%"
-        overflowX="auto"
-        css={{"&::-webkit-scrollbar": {display: "none"}}}
-        >
-        <Flex gap={2}>
-          { suggestions.map(({name, id, completed}) => (
-            <Flex
-              key={id}
-              cursor="pointer"
-              bgColor="gray.100"
-              px={3}
-              py={2}
-              borderRadius={8}
-              whiteSpace="nowrap"
-              onClick={_ => onSuggestionClick({id, completed})}
-            >
-              {name}
-            </Flex>
-          )) }
-        </Flex>
-      </Box>
     </Box>
   );
 }

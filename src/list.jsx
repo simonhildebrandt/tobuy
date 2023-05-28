@@ -161,6 +161,7 @@ export default ({listId, user}) => {
           value={newItem}
           onChange={updateNewItem}
           onKeyDown={handleKeyDown}
+          autoComplete="off"
         />
         <InputRightElement>
           <IconButton icon={<AddIcon />} onClick={addNewItem} isDisabled={newItem.length == 0}/>
