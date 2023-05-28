@@ -10,7 +10,14 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import { AddIcon, ArrowUpIcon, ArrowDownIcon, CheckIcon, CheckCircleIcon } from '@chakra-ui/icons';
+import {
+  AddIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
+  CheckIcon,
+  CheckCircleIcon,
+  CloseIcon
+} from '@chakra-ui/icons';
 import { arrayMoveImmutable } from 'array-move';
 
 import ItemList from './item-list';
@@ -42,20 +49,23 @@ export default ({listId, user}) => {
   });
 
   const suggestions = newItem.length > 0 ? cachedItems.filter(i => i.name.includes(newItem)) : [];
-  console.log({newItem, suggestions, cachedItems});
 
-  useEffect(_ => {
-    console.log('new suggestion!', {newItem, suggestions})
-    if (suggestions.length > 0) {
-      scrollToId(suggestions[0].id);
-    }
-  }, [newItem]);
+  // useEffect(_ => {
+  //   if (suggestions.length > 0) {
+  //     scrollToId(suggestions[0].id);
+  //   }
+  // }, [newItem]);
 
   if (!loaded) return <Spinner/>;
 
   function updateNewItem(e) {
     setNewItem(e.target.value);
   }
+
+  function clearNewItem() {
+    setNewItem("");
+  }
+
   function addNewItem() {
     const newItems = [{
       id: new Date().valueOf().toString(),
@@ -108,10 +118,7 @@ export default ({listId, user}) => {
   }
 
   function toggleHideCompleted() {
-    const sortedItems = cachedItems;
-    if (hideCompleted) {
-      sortedItems.sort((a, b) => a.completed - b.completed);
-    }
+    const sortedItems = hideCompleted ? cachedItems : cachedItems.toSorted((a, b) => a.completed - b.completed);
     updateRecord(
       path, {
         hideCompleted: !hideCompleted,
@@ -129,11 +136,30 @@ export default ({listId, user}) => {
   }
 
   return <Flex flexDir="column" height="100%" overflow="hidden" position="relative">
-    <Flex position="absolute" style={{right: "30px", bottom: "130px", width: "40px"}} flexDir="column" gap={[2]}>
+    <Flex position="absolute" style={{right: "30px", top: "130px", width: "40px"}} flexDir="column" gap={[2]}>
       <IconButton icon={<ArrowUpIcon/>} onClick={_ => scrollTo(0)}/>
       <IconButton icon={hideCompleted ? <CheckIcon/> : <CheckCircleIcon/> } onClick={toggleHideCompleted}/>
       <IconButton icon={<ArrowDownIcon/>} onClick={_ => scrollTo(displayItems.length - 1)}/>
     </Flex>
+
+    <Flex bgColor="gray.200" p={2} alignItems="center">
+      <InputGroup size='lg'>
+        <Input
+          bgColor="white"
+          size="lg"
+          placeholder="new item"
+          value={newItem}
+          onChange={updateNewItem}
+          onKeyDown={handleKeyDown}
+          autoComplete="off"
+        />
+        <InputRightElement>
+          <IconButton display={newItem.length > 0 ? 'block' : 'none'} icon={<CloseIcon />} onClick={clearNewItem}/>
+        </InputRightElement>
+      </InputGroup>
+      <IconButton ml={1} icon={<AddIcon />} onClick={addNewItem} isDisabled={newItem.length == 0}/>
+    </Flex>
+    <Suggestions suggestions={suggestions} onSuggestionClick={suggestionClicked} />
 
     <Flex flexDir="column" flexGrow={1} overflowY="auto" ref={pageRef}>
       <Box id="item-list-top"/>
@@ -150,23 +176,6 @@ export default ({listId, user}) => {
         onComplete={handleComplete}
         onDelete={handleDelete}
       />
-    </Flex>
-    <Suggestions suggestions={suggestions} onSuggestionClick={suggestionClicked} />
-    <Flex bgColor="gray.200" p={2}>
-      <InputGroup size='lg'>
-        <Input
-          bgColor="white"
-          size="lg"
-          placeholder="new item"
-          value={newItem}
-          onChange={updateNewItem}
-          onKeyDown={handleKeyDown}
-          autoComplete="off"
-        />
-        <InputRightElement>
-          <IconButton icon={<AddIcon />} onClick={addNewItem} isDisabled={newItem.length == 0}/>
-        </InputRightElement>
-      </InputGroup>
     </Flex>
     </Flex>
 }

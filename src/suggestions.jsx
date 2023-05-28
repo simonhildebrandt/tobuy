@@ -7,7 +7,6 @@ export default function({suggestions, onSuggestionClick}) {
     <Box
       bgColor="blue.300"
       width="100%"
-      height="110px"
       p={2}
       position="relative"
     >
@@ -16,7 +15,7 @@ export default function({suggestions, onSuggestionClick}) {
         overflowX="auto"
         css={{"&::-webkit-scrollbar": {display: "none"}}}
         >
-        <HStack gap={2}>
+        <HStack gap={1}>
           { suggestions.map(({name, id, completed}) => (
             <Button
               key={id}
