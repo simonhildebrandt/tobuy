@@ -11,9 +11,9 @@ export default ({items, onReorder, onComplete, onDelete, onUpdate}) => {
           flexDir="column"
           ref={droppable.innerRef}
           {...droppable.droppableProps}
-          py={[8]}
-          pl={[8]}
-          pr={[24]}
+          py={[4]}
+          pl={[4]}
+          pr={[20]}
         >
           { items.map((item, index) => (
             <Draggable
@@ -26,7 +26,7 @@ export default ({items, onReorder, onComplete, onDelete, onUpdate}) => {
                   ref={draggable.innerRef}
                   {...draggable.draggableProps}
                   {...draggable.dragHandleProps}
-                  fontSize={[24]}
+                  fontSize={[20]}
                   flexDir="column"
                   id={`item-${item.id}`}
                   my={2}

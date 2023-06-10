@@ -56,6 +56,7 @@ export default function({item, onComplete, onDelete, onUpdate}) {
       flexGrow={1}
       alignItems="center"
       pr={1}
+      py="2px"
       autoComplete="off"
     >
       <Checkbox

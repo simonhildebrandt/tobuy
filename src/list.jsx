@@ -33,6 +33,7 @@ export default ({listId, user}) => {
   const { data, loaded } = useFirestoreDocument(path);
   const [newItem, setNewItem] = useState('');
   const [cachedItems, setCachedItems] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -48,13 +49,8 @@ export default ({listId, user}) => {
     updateItems(newItems);
   });
 
-  const suggestions = newItem.length > 0 ? cachedItems.filter(i => i.name.includes(newItem)) : [];
-
-  // useEffect(_ => {
-  //   if (suggestions.length > 0) {
-  //     scrollToId(suggestions[0].id);
-  //   }
-  // }, [newItem]);
+  const defaultSuggestions = cachedItems.filter(item => item.completed).slice(0, 4);
+  const suggestions = newItem.length > 0 ? cachedItems.filter(i => i.name.includes(newItem)) : defaultSuggestions;
 
   if (!loaded) return <Spinner/>;
 
@@ -111,10 +107,8 @@ export default ({listId, user}) => {
   }
 
   function scrollToId(id) {
-    console.log('scrolling', {id})
     setTimeout(_ => {
       const el = document.getElementById(`item-${id}`)
-      console.log('finally scrolling')
       el?.scrollIntoView({behavior: 'smooth'})
     }, 100);
   }
@@ -134,15 +128,17 @@ export default ({listId, user}) => {
   }
 
   function suggestionClicked({id, completed}) {
-    console.log("suggestion clicked", {id});
     if (completed && hideCompleted) {
       toggleHideCompleted();
     }
     scrollToId(id);
   }
 
+  const newItemFocused = _ => setShowSuggestions(true);
+  const newItemBlurred = _ => setTimeout(_ => setShowSuggestions(false), 100);
+
   return <Flex flexDir="column" height="100%" overflow="hidden" position="relative">
-    <Flex position="absolute" style={{right: "30px", top: "130px", width: "40px"}} flexDir="column" gap={[2]}>
+    <Flex position="absolute" style={{right: "20px", top: "130px", width: "40px"}} flexDir="column" gap={[2]}>
       <IconButton icon={<ArrowUpIcon/>} onClick={_ => scrollTo(0)}/>
       <IconButton icon={hideCompleted ? <CheckIcon/> : <CheckCircleIcon/> } onClick={toggleHideCompleted}/>
       <IconButton icon={<ArrowDownIcon/>} onClick={_ => scrollTo(displayItems.length - 1)}/>
@@ -158,6 +154,8 @@ export default ({listId, user}) => {
           onChange={updateNewItem}
           onKeyDown={handleKeyDown}
           autoComplete="off"
+          onFocus={newItemFocused}
+          onBlur={newItemBlurred}
         />
         <InputRightElement>
           <IconButton display={newItem.length > 0 ? 'block' : 'none'} icon={<CloseIcon />} onClick={clearNewItem}/>
@@ -165,7 +163,11 @@ export default ({listId, user}) => {
       </InputGroup>
       <IconButton ml={1} icon={<AddIcon />} onClick={addNewItem} isDisabled={newItem.length == 0}/>
     </Flex>
-    <Suggestions suggestions={suggestions} onSuggestionClick={suggestionClicked} />
+    <Suggestions
+      show={showSuggestions}
+      suggestions={suggestions}
+      onSuggestionClick={suggestionClicked}
+    />
 
     <Flex flexDir="column" flexGrow={1} overflowY="auto" ref={pageRef}>
       <Box id="item-list-top"/>

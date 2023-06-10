@@ -1,9 +1,9 @@
 import React from 'react';
-import { Flex, Box, HStack, Button } from '@chakra-ui/react';
+import { Flex, Box, HStack, Button, Collapse } from '@chakra-ui/react';
 
 
-export default function({suggestions, onSuggestionClick}) {
-  return suggestions.length > 0 && (
+export default function({show, suggestions, onSuggestionClick}) {
+  return <Collapse in={show} animateOpacity>
     <Box
       bgColor="blue.300"
       width="100%"
@@ -36,5 +36,5 @@ export default function({suggestions, onSuggestionClick}) {
         bgGradient="linear(to-r, transparent, blue.300)"
       />
     </Box>
-  );
+  </Collapse>
 }
