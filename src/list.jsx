@@ -28,6 +28,10 @@ import { useFirestoreDocument, updateRecord } from './firebase';
 export default ({listId, user}) => {
   const path = `lists/${listId}`;
 
+  useEffect(_ => {
+    updateRecord(`/users/${user.uid}`, {lastList: listId});
+  }, []);
+
   const pageRef = useRef();
 
   const { data, loaded } = useFirestoreDocument(path);

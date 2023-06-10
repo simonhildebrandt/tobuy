@@ -88,7 +88,7 @@ function withUser() {
 function sendSignInLink(email) {
   console.log(`return to host ${host}/login`);
   const actionCodeSettings = {
-    url: host + '/login',
+    url: host + '/login?next=/last-list',
     handleCodeInApp: true
   };
 
@@ -100,7 +100,7 @@ function sendSignInLink(email) {
   .catch(err => console.error(err))
 }
 
-function handleSigninLink() {
+async function handleSigninLink() {
   if (isSignInWithEmailLink(auth, window.location.href)) {
     console.log("signin link!")
 
@@ -124,9 +124,11 @@ function handleSigninLink() {
       // Common errors could be invalid email and invalid or expired OTPs.
       console.error("failed login", error)
     })
-    .finally(() => navigate("/"));
+    .finally(() => {
+      navigate("/");
+    });
   } else {
-    console.log("not signing link")
+    console.log("not sign in link")
   }
 
 }
@@ -178,9 +180,8 @@ function useFirestoreDocument(path) {
 }
 
 function setupUser({uid, email}) {
-  setDoc(doc(db, 'users', uid), { email })
+  return setDoc(doc(db, 'users', uid), { email })
   .then(res => console.log('created!', res))
-
 }
 
 function addRecord(path, data) {

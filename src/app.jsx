@@ -45,7 +45,7 @@ export default () => {
 
   useRouter(router => {
     router.on("/login", () => {
-      handleSigninLink();
+      handleSigninLink({});
       setRouterState({page: "logging-in"})
     })
     .on("/", () => {

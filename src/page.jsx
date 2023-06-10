@@ -9,6 +9,7 @@ import {
   MenuItem,
   IconButton,
   Link,
+  Image,
 } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { logout } from './firebase';
@@ -27,7 +28,7 @@ export default function({user, page}) {
         justify="space-between"
         align="center"
       >
-        <Heading size="md" color="blue.200"><Link href="/">RunToStore</Link></Heading>
+        <Heading size="md" color="blue.200"><Link href="/"><Image width="50px" src="/logo.svg"/></Link></Heading>
         <Menu direction="rtl">
           <MenuButton
             as={IconButton}
