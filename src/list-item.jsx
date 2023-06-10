@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { Flex, Text, Checkbox, IconButton } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import { Flex, Text, Checkbox, IconButton, Input } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { useOutsideClick } from '@chakra-ui/react'
 
 
-export default function({item, onComplete, onDelete}) {
-  const { id, name, completed} = item;
+export default function({item, onComplete, onDelete, onUpdate}) {
+  const { id, name, completed, detail } = item;
 
   const [deleting, setDeleting] = useState(false);
+  const [newDetail, setNewDetail] = useState("");
 
   const ref = React.useRef();
   useOutsideClick({
@@ -26,6 +27,18 @@ export default function({item, onComplete, onDelete}) {
     }
   }
 
+  useEffect(() => {
+    setNewDetail(detail || "");
+  }, [detail]);
+
+  function updateDetail(event) {
+    setNewDetail(event.target.value);
+  }
+
+  function saveDetail() {
+    onUpdate(id, {detail: newDetail});
+  }
+
   return <Flex
     pl={[4]}
     pr={2}
@@ -34,19 +47,38 @@ export default function({item, onComplete, onDelete}) {
     align="center"
     justify="space-between"
   >
-    <Flex>
+    <Flex
+      as="form"
+      whiteSpace="nowrap"
+      overflow="hidden"
+      textOverflow="ellipsis"
+      gap={4}
+      flexGrow={1}
+      alignItems="center"
+      pr={1}
+      autoComplete="off"
+    >
       <Checkbox
         isChecked={completed}
         onChange={_ => onComplete(id, !completed)}
         size="lg"
-        mr={4}
       />
-      <Text
-        textDecoration={completed ? 'line-through' : ''}
-        color={completed ? 'gray.400' : 'black'}
-      >
-        {name}
-      </Text>
+      <Flex flexGrow={1}>
+        <Text
+          textDecoration={completed ? 'line-through' : ''}
+          color={completed ? 'gray.400' : 'black'}
+        >
+          {name}
+        </Text>
+      </Flex>
+      <Input
+        size="sm"
+        border={0}
+        textAlign="right"
+        value={newDetail}
+        onChange={updateDetail}
+        onBlur={saveDetail}
+      />
     </Flex>
 
     <Flex ref={ref}>

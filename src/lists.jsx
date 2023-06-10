@@ -9,7 +9,7 @@ import {
   IconButton,
   Text
 } from '@chakra-ui/react';
-import { AddIcon, ArrowDownIcon } from '@chakra-ui/icons';
+import { AddIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { useFirestoreCollection, addRecord } from './firebase';
 import ListDetails from './list-details';
 
@@ -46,16 +46,10 @@ export default function({user}) {
   return <Flex flexDir="column" flexGrow={1} overflowY="auto">
     { items.length == 0 && (
       <Flex m="auto" p={4} flexDir="column" align="center">
-        <Text>No lists added yet - try adding one at the bottom.</Text>
-        <ArrowDownIcon mt={4}/>
+        <Text>No lists added yet - try adding one at the top.</Text>
+        <ArrowUpIcon mt={4}/>
       </Flex>
     ) }
-
-    <Flex flexDir="column" flexGrow={1}>
-      { items.map(([id, item]) => (
-        <ListDetails key={id} id={id} item={item}/>
-      )) }
-    </Flex>
 
     <Flex bgColor="gray.200" p={2}>
       <InputGroup size='lg'>
@@ -71,6 +65,12 @@ export default function({user}) {
           <IconButton icon={<AddIcon />} onClick={addNewItem} isDisabled={newItem.length == 0}/>
         </InputRightElement>
       </InputGroup>
+    </Flex>
+
+    <Flex flexDir="column" flexGrow={1}>
+      { items.map(([id, item]) => (
+        <ListDetails key={id} id={id} item={item}/>
+      )) }
     </Flex>
   </Flex>
 }

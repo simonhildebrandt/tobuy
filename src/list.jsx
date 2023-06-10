@@ -92,6 +92,12 @@ export default ({listId, user}) => {
     updateItems(cachedItems);
   }
 
+  function handleUpdate(id, data) {
+    const index = cachedItems.findIndex(item => item.id == id);
+    cachedItems[index] = {...cachedItems[index], ...data};
+    updateItems(cachedItems);
+  }
+
   function updateItems(newItems) {
     updateRecord(path, {items: newItems});
     setCachedItems(newItems);
@@ -166,8 +172,8 @@ export default ({listId, user}) => {
 
       { cachedItems.length == 0 && (
         <Flex m="auto" p={4} flexDir="column" align="center">
-          <Text>No items added yet - try adding one at the bottom.</Text>
-          <ArrowDownIcon mt={4}/>
+          <Text>No items added yet - try adding one at the top.</Text>
+          <ArrowUpIcon mt={4}/>
         </Flex>
       ) }
       <ItemList
@@ -175,6 +181,7 @@ export default ({listId, user}) => {
         onReorder={handleDragEnd}
         onComplete={handleComplete}
         onDelete={handleDelete}
+        onUpdate={handleUpdate}
       />
     </Flex>
     </Flex>

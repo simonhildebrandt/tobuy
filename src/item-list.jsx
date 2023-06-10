@@ -3,7 +3,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Flex } from '@chakra-ui/react';
 import ListItem from './list-item';
 
-export default ({items, onReorder, onComplete, onDelete}) => {
+export default ({items, onReorder, onComplete, onDelete, onUpdate}) => {
   return <DragDropContext onDragEnd={onReorder}>
     <Droppable droppableId="shoppinglist">
       {(droppable) => (
@@ -35,6 +35,7 @@ export default ({items, onReorder, onComplete, onDelete}) => {
                     item={item}
                     onComplete={onComplete}
                     onDelete={onDelete}
+                    onUpdate={onUpdate}
                   />
                 </Flex>
               )}

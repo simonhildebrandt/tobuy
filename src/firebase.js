@@ -16,6 +16,8 @@ import {
 
 import {
   getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
   collection,
   query,
   where,
@@ -46,9 +48,12 @@ import { navigate } from './router';
 const app = initializeApp(firebaseConfig);
 
 
-const auth = getAuth();
+const auth = getAuth(app);
 
-const db = getFirestore();
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({})
+});
+// const db = getFirestore(app);
 
 
 export const host = SITE_URL ? SITE_URL : "http://127.0.0.1:9000" ;
