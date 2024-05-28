@@ -10,9 +10,10 @@
     "build": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js --define:SITE_URL=false",
     "watch": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js --watch --define:SITE_URL=false",
     "cp_to_public": "cp dev/* public",
-    "build_prod": "yarn cp_to_public && yarn esbuild src/index.jsx --bundle --outfile=public/index.js --define:SITE_URL=\\\"https://runto.store\\\"",
+    "build_prod": "yarn cp_to_public && yarn esbuild src/index.jsx --bundle --outfile=public/index.js --define:SITE_URL=\\\"https://storerun.au\\\"",
     "emulator": "CACHE=true firebase emulators:start --export-on-exit=./firebase_data --import=./firebase_data",
-    "setup_emulator": "cp -R default_data firebase_data"
+    "setup_emulator": "cp -R default_data firebase_data",
+    "deploy_hosting": "yarn build_prod && yarn firebase deploy --only hosting"
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
@@ -25,7 +26,7 @@
     "firebase": "^9.21.0",
     "firebase-tools": "^11.29.1",
     "framer-motion": "^4",
-    "live-server": "^1.2.1",
+    "live-server": "1.2.1",
     "navigo": "^8.11.1",
     "react": "^18",
     "react-beautiful-dnd": "^13.1.1",

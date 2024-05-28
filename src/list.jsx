@@ -54,7 +54,7 @@ export default ({listId, user}) => {
   });
 
   const defaultSuggestions = cachedItems.filter(item => item.completed).slice(0, 4);
-  const suggestions = newItem.length > 0 ? cachedItems.filter(i => i.name.includes(newItem)) : defaultSuggestions;
+  const suggestions = newItem.length > 0 ? cachedItems.filter(i => i.name.toLocaleLowerCase().includes(newItem.toLocaleLowerCase())) : defaultSuggestions;
 
   if (!loaded) return <Spinner/>;
 

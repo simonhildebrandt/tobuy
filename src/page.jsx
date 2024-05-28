@@ -13,10 +13,15 @@ import {
 } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { logout } from './firebase';
-
+import { navigate } from './router';
 
 
 export default function({user, page}) {
+
+  function handleLogout() {
+    const url = new URL(window.location.href);
+    logout().then(navigate('/?next=' + encodeURIComponent(url.pathname)))
+  }
 
   return <Flex bgColor="blue.400" width="100%" height="100%" flexDir="column">
     <Flex flexDir="column" mx="auto" width={["100%", "100%", "48em"]} height="100%" bgColor="blue.200">
@@ -37,7 +42,7 @@ export default function({user, page}) {
             variant="ghost"
           />
           { user && <MenuList>
-              <MenuItem onClick={logout}>
+              <MenuItem onClick={handleLogout}>
                 Logout
               </MenuItem>
             </MenuList>

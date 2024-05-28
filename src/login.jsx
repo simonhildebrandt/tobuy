@@ -34,11 +34,13 @@ export default function Login() {
 
   const onSubmit = event => {
     if (inputRef.current.checkValidity()) {
-      sendSignInLink(email);
-      onLoginClose()
+      const url = new URL(window.location.href);
+      const next = url.searchParams.get('next') || '/';
+      sendSignInLink(email, next);
+      onLoginClose();
       setIsSent(true);
     } else {
-      setIsValid(false)
+      setIsValid(false);
     }
   }
 

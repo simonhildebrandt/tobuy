@@ -25,6 +25,7 @@ import {
   connectFirestoreEmulator,
   addDoc,
   setDoc,
+  getDoc,
   updateDoc,
   deleteDoc,
   doc,
@@ -64,10 +65,18 @@ if (!SITE_URL) {
 }
 
 
+const noop = () => {};
+
 function withUser() {
   const [user, setUser] = useState(null);
+  const [loginData, setLoginData] = useState(null);
 
-  useEffect(() => {
+  useEffect(_ => {
+    handleSigninLink()
+    .then(setLoginData);
+  }, []);
+
+  useEffect(_ => {
     const unsub = onAuthStateChanged(auth, userData => {
       if (userData) {
         // const uid = user.uid;
@@ -82,13 +91,13 @@ function withUser() {
     return unsub;
   }, [])
 
-  return user;
+  return {user, loginData};
 }
 
-function sendSignInLink(email) {
+function sendSignInLink(email, next = '/') {
   console.log(`return to host ${host}/login`);
   const actionCodeSettings = {
-    url: host + '/login?next=/last-list',
+    url: host + `/login?next=${encodeURIComponent(next)}`,
     handleCodeInApp: true
   };
 
@@ -104,6 +113,9 @@ async function handleSigninLink() {
   if (isSignInWithEmailLink(auth, window.location.href)) {
     console.log("signin link!")
 
+    const url = new URL(window.location.href);
+    const next = url.searchParams.get('next') || '/';
+
     let email = window.localStorage.getItem('emailForSignIn');
     if (!email) {
       // User opened the link on a different device. To prevent session fixation
@@ -111,28 +123,25 @@ async function handleSigninLink() {
       email = window.prompt('Please provide your email for confirmation');
     }
 
-    signInWithEmailLink(auth, email, window.location.href)
+    return signInWithEmailLink(auth, email, window.location.href)
     .then(async (result) => {
       // Clear email from storage.
       window.localStorage.removeItem('emailForSignIn');
-      console.log("logged in!", result)
+      console.log("logged in!", result);
 
-      await setupUser(result.user)
+      await setupUser(result.user);
+
+      return {next};
     })
     .catch((error) => {
       // Some error occurred, you can inspect the code: error.code
       // Common errors could be invalid email and invalid or expired OTPs.
       console.error("failed login", error)
-    })
-    .finally(() => {
-      navigate("/");
     });
   } else {
     console.log("not sign in link")
   }
-
 }
-
 
 export const objectFromDocs = snapshot => {
   const hash = {};
@@ -184,14 +193,17 @@ function setupUser({uid, email}) {
   .then(res => console.log('created!', res))
 }
 
+async function getUserData(uid) {
+  return getDoc(doc(db, `users/${uid}`)).then(d => d?.data());
+}
+
 function addRecord(path, data) {
   console.log({path, data})
   return addDoc(collection(db, path), data)
 }
 
-function logout() {
-  navigate("/");
-  signOut(auth);
+async function logout() {
+  return signOut(auth);
 }
 
 function updateRecord(path, data) {
@@ -219,5 +231,6 @@ export {
   deleteRecord,
   useFirestoreCollection,
   useFirestoreDocument,
-  batchUpdate
+  batchUpdate,
+  getUserData
 }
